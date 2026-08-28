@@ -335,7 +335,7 @@ ${result.flashcards
 
         <AssistantChat
           key={sessionId}
-          material={material}
+          context={material}
           sessionId={sessionId}
         />
         <section className="results-header">
