@@ -1,4 +1,4 @@
-StudyAI — AI Study Notes Generator
+ReviseAI — AI Study Notes Generator
 
 Project Documentation / README
 
@@ -6,7 +6,7 @@ Project Documentation / README
 https://ai-study-notes-sable.vercel.app/
 
 📚 Overview
-StudyAI is an AI-powered study assistant that transforms lengthy study material into concise, structured, and revision-friendly content. Users can paste notes, textbook content, lecture material, or a study topic and generate summaries, key points, quizzes, flashcards, and explanations through the AI Study Assistant.
+ReviseAI is an AI-powered study assistant that transforms lengthy study material into concise, structured, and revision-friendly content. Users can paste notes, textbook content, lecture material, or a study topic and generate summaries, key points, quizzes, flashcards, and explanations through the AI Study Assistant.
 
 Goal: Study smarter, not harder.
 
@@ -56,7 +56,7 @@ ai-study-notes/
 ├── .gitignore
 └── README.md
 
-🔄 How StudyAI Works
+🔄 How ReviseAI Works
 1. User enters study material.
 2. The material is sent to the AI generation API.
 3. AI analyzes the material and creates structured learning content.
@@ -95,7 +95,7 @@ Local application: http://localhost:3000
 Store API credentials in environment variables and never commit them to GitHub. Keep .env, .env.local, and other credential files out of version control.
 
 🚀 Deployment
-StudyAI is deployed on Vercel and connected to the GitHub repository SaherM26/ai-study-notes.
+ReviseAI is deployed on Vercel and connected to the GitHub repository SaherM26/ai-study-notes.
 Production: https://ai-study-notes-sable.vercel.app/
 
 🧪 Example Study Material

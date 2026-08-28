@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StudyAI – AI Study Notes Generator",
+  title: "ReviseAI – AI Study Notes Generator",
   description:
     "Turn your study material into summaries, key points, revision questions, flashcards, and AI-powered explanations.",
 };

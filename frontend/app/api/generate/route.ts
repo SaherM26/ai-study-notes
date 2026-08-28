@@ -129,7 +129,7 @@ export async function POST(request: Request) {
         }
 
         const prompt = `
-You are StudyAI, an expert study assistant.
+You are ReviseAI, an expert study assistant.
 
 Analyze the study material provided by the student.
 

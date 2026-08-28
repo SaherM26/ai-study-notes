@@ -51,7 +51,7 @@ export default function Home() {
         setResult(parsed.result);
       }
     } catch (error) {
-      console.error("Failed to restore StudyAI session:", error);
+      console.error("Failed to restore ReviseAI session:", error);
     }
   }, []);
 
@@ -67,7 +67,7 @@ export default function Home() {
         })
       );
     } catch (error) {
-      console.error("Failed to save StudyAI session:", error);
+      console.error("Failed to save ReviseAI session:", error);
     }
   }, [material, result]);
   const handleFileUpload = async (
@@ -221,7 +221,7 @@ export default function Home() {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-      console.error("Failed to clear StudyAI session:", error);
+      console.error("Failed to clear ReviseAI session:", error);
     }
 
     window.scrollTo({
@@ -232,7 +232,7 @@ export default function Home() {
   const copyNotes = async () => {
     if (!result) return;
 
-    const notes = `STUDYAI - STUDY NOTES
+    const notes = `ReviseAI - STUDY NOTES
 
 SUMMARY
 ${result.summary}
@@ -312,7 +312,7 @@ ${result.flashcards
         <header className="top-header">
           <div>
             <div className="logo">
-              Study<span>AI</span>
+              Revise<span>AI</span>
             </div>
 
             <p className="tagline">
@@ -617,7 +617,7 @@ ${result.flashcards
         </section>
 
         <footer className="footer">
-          <div>StudyAI · AI-powered study assistant</div>
+          <div>ReviseAI · AI-powered study assistant</div>
 
           <button
             className="clear-data-button"
@@ -657,7 +657,7 @@ ${result.flashcards
         <div>
 
           <div className="logo">
-            Study<span>AI</span>
+            Revise<span>AI</span>
           </div>
 
           <p className="tagline">
@@ -834,7 +834,7 @@ ${result.flashcards
       </section>
 
       <footer className="footer">
-        StudyAI · AI-powered study assistant
+        ReviseAI · AI-powered study assistant
       </footer>
 
     </main>

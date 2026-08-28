@@ -112,14 +112,14 @@ export async function POST(request: Request) {
                 const speaker =
                     message.role === "user"
                         ? "Student"
-                        : "StudyAI Assistant";
+                        : "ReviseAI Assistant";
 
                 return `${speaker}: ${message.content}`;
             })
             .join("\n\n");
 
         const prompt = `
-You are StudyAI Assistant, a helpful AI tutor.
+You are ReviseAI Assistant, a helpful AI tutor.
 
 Your job is to help the student understand the provided study material.
 
