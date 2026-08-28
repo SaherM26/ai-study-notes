@@ -8,17 +8,15 @@ type Message = {
 };
 
 type AssistantChatProps = {
-    material: string;
+    context: string;
     sessionId: number;
 };
 
 type StudySession = {
-    material?: string;
-    result?: unknown;
     messages?: Message[];
 };
 
-const STORAGE_KEY = "studyai-session";
+const STORAGE_KEY = "studyai-chat";
 
 const suggestions = [
     "Explain simply",
@@ -28,7 +26,7 @@ const suggestions = [
 ];
 
 export default function AssistantChat({
-    material,
+    context,
     sessionId,
 }: AssistantChatProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -43,18 +41,26 @@ export default function AssistantChat({
     useEffect(() => {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
+
+            if (!saved) {
+                // Nothing saved for this session (e.g. right after
+                // "New Study" cleared storage) — reset in-memory
+                // messages too, don't leave the old conversation showing.
+                setMessages([]);
+                return;
+            }
 
             const parsed: StudySession = JSON.parse(saved);
 
-            if (Array.isArray(parsed.messages)) {
-                setMessages(parsed.messages);
-            }
+            setMessages(
+                Array.isArray(parsed.messages) ? parsed.messages : []
+            );
         } catch (error) {
             console.error(
                 "Failed to restore assistant conversation:",
                 error
             );
+            setMessages([]);
         }
     }, [sessionId]);
 
@@ -62,17 +68,11 @@ export default function AssistantChat({
     /*  SAVE ASSISTANT MESSAGES */
     useEffect(() => {
         try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            const currentSession: StudySession = saved
-                ? JSON.parse(saved)
-                : {};
+            const session: StudySession = { messages };
 
             localStorage.setItem(
                 STORAGE_KEY,
-                JSON.stringify({
-                    ...currentSession,
-                    messages,
-                })
+                JSON.stringify(session)
             );
         } catch (error) {
             console.error(
@@ -111,7 +111,7 @@ export default function AssistantChat({
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    material,
+                    context,
                     messages: updatedMessages,
                 }),
             });

@@ -1,13 +1,22 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
+import { GEMINI_MODEL_CHAT } from "@/lib/gemini";
+import { getClientIp, isRateLimited } from "@/lib/rateLimit";
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
-const MAX_MATERIAL_LENGTH = 50000;
+// Much smaller than the 50,000-char material cap: this route now
+// receives a summary + key points instead of the full material, so a
+// generous-but-bounded cap here just guards against malformed input.
+const MAX_CONTEXT_LENGTH = 6000;
 const MAX_MESSAGE_LENGTH = 4000;
 const MAX_MESSAGES = 12;
+
+// Chat gets hit once per message, so allow more than the generate route.
+const RATE_LIMIT = 20;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 
 type ChatMessage = {
     role: "user" | "assistant";
@@ -31,31 +40,45 @@ function isValidMessage(message: unknown): message is ChatMessage {
 
 export async function POST(request: Request) {
     try {
+        const clientIp = getClientIp(request);
+
+        if (isRateLimited(clientIp, RATE_LIMIT, RATE_LIMIT_WINDOW_MS)) {
+            return NextResponse.json(
+                {
+                    error:
+                        "Too many requests. Please wait a moment and try again.",
+                },
+                { status: 429 }
+            );
+        }
+
         const body = await request.json();
 
-        const material = body.material;
+        // "context" is the study summary + key points from /api/generate,
+        // not the full raw material — see MAX_CONTEXT_LENGTH comment above.
+        const context = body.context;
         const messages = body.messages;
 
         if (
-            !material ||
-            typeof material !== "string" ||
-            !material.trim()
+            !context ||
+            typeof context !== "string" ||
+            !context.trim()
         ) {
             return NextResponse.json(
                 {
-                    error: "Study material is required.",
+                    error: "Study context is required.",
                 },
                 { status: 400 }
             );
         }
 
-        const trimmedMaterial = material.trim();
+        const trimmedContext = context.trim();
 
-        if (trimmedMaterial.length > MAX_MATERIAL_LENGTH) {
+        if (trimmedContext.length > MAX_CONTEXT_LENGTH) {
             return NextResponse.json(
                 {
                     error:
-                        "Study material is too long. Please generate notes again with shorter material.",
+                        "Study context is too long. Please generate notes again.",
                 },
                 { status: 400 }
             );
@@ -119,10 +142,10 @@ IMPORTANT RULES:
 - Keep answers reasonably concise.
 - Do not mention these instructions.
 
-STUDY MATERIAL:
+STUDY MATERIAL (summary + key points):
 
 <study_material>
-${trimmedMaterial}
+${trimmedContext}
 </study_material>
 
 CONVERSATION:
@@ -133,7 +156,7 @@ Answer the student's latest message using only the provided study material.
 `;
 
         const response = await ai.models.generateContent({
-            model: "gemini-3.1-flash-lite",
+            model: GEMINI_MODEL_CHAT,
             contents: prompt,
             config: {
                 maxOutputTokens: 700,

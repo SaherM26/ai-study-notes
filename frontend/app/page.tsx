@@ -77,7 +77,7 @@ export default function Home() {
 
     if (!file) return;
 
-    const allowedTypes = [".pdf", ".docx", ".txt"];
+    const allowedTypes = [".pdf", ".doc", ".docx", ".txt"];
     const extension = file.name
       .substring(file.name.lastIndexOf("."))
       .toLowerCase();
@@ -718,26 +718,53 @@ ${result.flashcards
             </span>
 
           </div>
-          <div className="file-upload">
-            <label htmlFor="study-file" className="upload-button">
-              📎 {uploading ? "Processing..." : "Upload PDF / DOCX / TXT"}
+          <div className="file-upload-area">
+            <label
+              htmlFor="study-file"
+              className={`upload-dropzone ${uploading ? "uploading" : ""} ${fileName ? "has-file" : ""
+                }`}
+            >
+              <div className="upload-icon">
+                {uploading ? "⏳" : fileName ? "✓" : "📄"}
+              </div>
+
+              <div className="upload-content">
+                <strong>
+                  {uploading
+                    ? "Processing your document..."
+                    : fileName
+                      ? "Document uploaded successfully"
+                      : "Upload your study material"}
+                </strong>
+
+                <span>
+                  {uploading
+                    ? "Extracting text from your file"
+                    : fileName
+                      ? fileName
+                      : "Drag & drop or click to browse"}
+                </span>
+
+                {!uploading && !fileName && (
+                  <small>PDF · DOC · DOCX · TXT</small>
+                )}
+              </div>
+
+              {!uploading && !fileName && (
+                <span className="browse-button">Browse</span>
+              )}
             </label>
 
             <input
               id="study-file"
               type="file"
-              accept=".pdf,.docx,.txt"
+              accept=".pdf,.doc,.docx,.txt"
               onChange={handleFileUpload}
               disabled={uploading}
               hidden
             />
-
-            {fileName && (
-              <span className="uploaded-file-name">
-                📄 {fileName}
-              </span>
-            )}
           </div>
+
           <textarea
             value={material}
             maxLength={MAX_MATERIAL_LENGTH}
@@ -767,8 +794,8 @@ ${result.flashcards
                 disabled={loading}
               >
                 {loading
-                  ? "✨ Generating..."
-                  : "✨ Generate Study Notes"}
+                  ? "⏳ Analyzing your material..."
+                  : "✨ Generate My Study Notes →"}
               </button>
             </div>
           </div>
