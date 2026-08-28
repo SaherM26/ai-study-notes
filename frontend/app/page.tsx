@@ -24,6 +24,8 @@ export default function Home() {
   const [material, setMaterial] = useState("");
   const [result, setResult] = useState<StudyResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [fileName, setFileName] = useState("");
   const [sessionId, setSessionId] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizIndex, setQuizIndex] = useState(0);
@@ -68,6 +70,73 @@ export default function Home() {
       console.error("Failed to save StudyAI session:", error);
     }
   }, [material, result]);
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = [".pdf", ".docx", ".txt"];
+    const extension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+
+    if (!allowedTypes.includes(extension)) {
+      alert("Please upload a PDF, DOCX, or TXT file.");
+      event.target.value = "";
+      return;
+    }
+
+    setUploading(true);
+    setFileName(file.name);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to upload file.");
+      }
+
+      if (!data.text) {
+        throw new Error("No text could be extracted from this file.");
+      }
+
+      if (data.text.length > MAX_MATERIAL_LENGTH) {
+        alert(
+          `The extracted text is too long. Please upload a shorter document (maximum ${MAX_MATERIAL_LENGTH.toLocaleString()} characters).`
+        );
+        setMaterial("");
+        setFileName("");
+        return;
+      }
+
+      setMaterial(data.text);
+
+      alert(`"${file.name}" uploaded successfully!`);
+    } catch (error) {
+      console.error("File upload error:", error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to process the uploaded file."
+      );
+
+      setFileName("");
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
+  };
   const generateNotes = async () => {
     const trimmedMaterial = material.trim();
 
@@ -267,8 +336,8 @@ ${result.flashcards
         <AssistantChat
           key={sessionId}
           material={material}
+          sessionId={sessionId}
         />
-
         <section className="results-header">
           <div>
             <p className="analysis-label">
@@ -560,6 +629,7 @@ ${result.flashcards
               if (confirmed) {
                 localStorage.removeItem(STORAGE_KEY);
                 setMaterial("");
+                setFileName("");
                 setResult(null);
                 setSessionId((previous) => previous + 1);
               }
@@ -648,7 +718,26 @@ ${result.flashcards
             </span>
 
           </div>
+          <div className="file-upload">
+            <label htmlFor="study-file" className="upload-button">
+              📎 {uploading ? "Processing..." : "Upload PDF / DOCX / TXT"}
+            </label>
 
+            <input
+              id="study-file"
+              type="file"
+              accept=".pdf,.docx,.txt"
+              onChange={handleFileUpload}
+              disabled={uploading}
+              hidden
+            />
+
+            {fileName && (
+              <span className="uploaded-file-name">
+                📄 {fileName}
+              </span>
+            )}
+          </div>
           <textarea
             value={material}
             maxLength={MAX_MATERIAL_LENGTH}
@@ -663,7 +752,10 @@ ${result.flashcards
             <div className="input-actions">
               <button
                 className="clear-material-button"
-                onClick={() => setMaterial("")}
+                onClick={() => {
+                  setMaterial("");
+                  setFileName("");
+                }}
                 type="button"
               >
                 Clear

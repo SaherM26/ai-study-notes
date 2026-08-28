@@ -9,6 +9,7 @@ type Message = {
 
 type AssistantChatProps = {
     material: string;
+    sessionId: number;
 };
 
 type StudySession = {
@@ -28,6 +29,7 @@ const suggestions = [
 
 export default function AssistantChat({
     material,
+    sessionId,
 }: AssistantChatProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState("");
@@ -42,7 +44,9 @@ export default function AssistantChat({
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (!saved) return;
+
             const parsed: StudySession = JSON.parse(saved);
+
             if (Array.isArray(parsed.messages)) {
                 setMessages(parsed.messages);
             }
@@ -52,7 +56,8 @@ export default function AssistantChat({
                 error
             );
         }
-    }, []);
+    }, [sessionId]);
+
 
     /*  SAVE ASSISTANT MESSAGES */
     useEffect(() => {

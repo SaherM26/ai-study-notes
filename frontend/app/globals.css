@@ -653,21 +653,32 @@ code {
   display: flex;
   align-items: flex-start;
 
-  gap: 12px;
+  gap: 14px;
 
-  padding: 13px;
+  padding: 14px 15px;
 
-  border-radius: 14px;
+  border-radius: 15px;
   border: 1px solid #253451;
 
   background: #0b1325;
   color: #dbe6f7;
 
   font-size: clamp(14px, 1.1vw, 16px);
-  line-height: 1.5;
+  line-height: 1.55;
 
   overflow-wrap: anywhere;
   word-break: break-word;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.key-point:hover {
+  border-color: #355486;
+  background: #0d172c;
+  transform: translateY(-1px);
 }
 
 .number {
@@ -755,20 +766,22 @@ code {
 }
 
 .flashcard {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
+  padding: 18px;
+  border-radius: 16px;
 
-  padding: 16px;
-  border-radius: 14px;
+  background: #0b1325;
+  border: 1px solid #253451;
 
-  background: #020617;
-  border: 1px solid #263653;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
 
-  overflow-wrap: anywhere;
-  word-break: break-word;
-
-  flex-shrink: 0;
+.flashcard:hover {
+  border-color: #355486;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
 .flashcard h3 {
@@ -783,6 +796,17 @@ code {
   color: #94a8c7;
   font-size: clamp(13px, 1.1vw, 16px);
   line-height: 1.5;
+}
+
+.flashcard-question {
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.flashcard-answer {
+  line-height: 1.55;
+  color: #9fb2d0;
 }
 
 /* 
@@ -1936,4 +1960,59 @@ button {
 
 .clear-data-button:active {
   transform: scale(0.98);
+}
+
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 0 6px;
+  flex-wrap: wrap;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: #111c32;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-button:hover {
+  background: #182642;
+  border-color: #4f7cff;
+  transform: translateY(-1px);
+}
+
+.uploaded-file-name {
+  color: #94a3b8;
+  font-size: 14px;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .input-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .clear-material-button,
+  .generate-button {
+    width: 100%;
+  }
+
+  .upload-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
