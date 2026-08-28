@@ -46,3 +46,4 @@ __pycache__/
 frontend/node_modules/
 frontend/.next/
 frontend/.env.local
+frontend/frontend/.next/
